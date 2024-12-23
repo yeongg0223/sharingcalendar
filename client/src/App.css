@@ -1,31 +1,66 @@
 body {
     background-color: whitesmoke;
     color: black;
-    padding: 0 20px;
 }
 
-#root, body, html {
+#root,
+body,
+html {
     height: 100%;
     margin: 0;
 }
 
 div.main {
-    display: flex; /* Flexbox로 배치 */
-    height: 100%; /* 부모 요소의 높이를 100%로 설정 */
+    display: flex;
+    height: 100%;
 }
-  
+
 #sidebar {
-  width: 30%; /* 사이드바 너비 30% */
-  background-color: #f4f4f4; /* 배경 색 */
-  padding: 10px; /* 여백 */
-  box-sizing: border-box;
+    width: 20%;
+    background-color: white;
+    margin: 20px;
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 50px;
 }
 
 #main-calendar {
-  width: 70%; /* 메인 캘린더 너비 70% */
-  padding: 20px; /* 여백 */
-  box-sizing: border-box;
+    width: 70%;
+    padding: 20px;
+    box-sizing: border-box;
 }
+
+
+/******************** 사이드바 ********************/
+#sidebar hr { margin: 20px 0 !important;}
+.profile {
+    display: flex;
+    align-items: center;
+}
+
+.profile-image {
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.name {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.state {
+    margin-top: 5px;
+    font-size: 14px;
+    color: gray;
+}
+
 
 /******************** 캘린더 ********************/
 
