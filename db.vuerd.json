@@ -1,0 +1,191 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dineug/erd-editor/main/json-schema/schema.json",
+  "version": "3.0.0",
+  "settings": {
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": -5,
+    "scrollLeft": -210,
+    "zoomLevel": 1,
+    "show": 431,
+    "database": 4,
+    "databaseName": "sharingcalendar",
+    "canvasType": "ERD",
+    "language": 1,
+    "tableNameCase": 4,
+    "columnNameCase": 2,
+    "bracketType": 1,
+    "relationshipDataTypeSync": true,
+    "relationshipOptimization": false,
+    "columnOrder": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "maxWidthComment": -1,
+    "ignoreSaveSettings": 0
+  },
+  "doc": {
+    "tableIds": [
+      "hU1PpNZjc_81qbho5USdP"
+    ],
+    "relationshipIds": [],
+    "indexIds": [],
+    "memoIds": []
+  },
+  "collections": {
+    "tableEntities": {
+      "hU1PpNZjc_81qbho5USdP": {
+        "id": "hU1PpNZjc_81qbho5USdP",
+        "name": "USERINFO",
+        "comment": "회원정보",
+        "columnIds": [
+          "XRvQrovfLa_7F_zpRywSY",
+          "PYJpStFmyqSq518Iscg2d",
+          "-Fd_upg58CvFH6kmYBYb_"
+        ],
+        "seqColumnIds": [
+          "XRvQrovfLa_7F_zpRywSY",
+          "PYJpStFmyqSq518Iscg2d",
+          "-Fd_upg58CvFH6kmYBYb_"
+        ],
+        "ui": {
+          "x": 169,
+          "y": 192,
+          "zIndex": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": "#95BFD1"
+        },
+        "meta": {
+          "updateAt": 1735001667810,
+          "createAt": 1735001418890
+        }
+      }
+    },
+    "tableColumnEntities": {
+      "XRvQrovfLa_7F_zpRywSY": {
+        "id": "XRvQrovfLa_7F_zpRywSY",
+        "tableId": "hU1PpNZjc_81qbho5USdP",
+        "name": "id",
+        "comment": "아이디",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1735001631301,
+          "createAt": 1735001528785
+        }
+      },
+      "PYJpStFmyqSq518Iscg2d": {
+        "id": "PYJpStFmyqSq518Iscg2d",
+        "tableId": "hU1PpNZjc_81qbho5USdP",
+        "name": "password",
+        "comment": "비밀번호",
+        "dataType": "VARCHAR(255)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 81,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1735001658456,
+          "createAt": 1735001532846
+        }
+      },
+      "-Fd_upg58CvFH6kmYBYb_": {
+        "id": "-Fd_upg58CvFH6kmYBYb_",
+        "tableId": "hU1PpNZjc_81qbho5USdP",
+        "name": "username",
+        "comment": "사용자명",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 8,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1735001687375,
+          "createAt": 1735001667810
+        }
+      }
+    },
+    "relationshipEntities": {},
+    "indexEntities": {},
+    "indexColumnEntities": {},
+    "memoEntities": {}
+  },
+  "lww": {
+    "settings.databaseName": [
+      "settings",
+      -1,
+      -1,
+      {
+        "databaseName": 1735001367856
+      }
+    ],
+    "hU1PpNZjc_81qbho5USdP": [
+      "tableEntities",
+      1735001418889,
+      -1,
+      {
+        "name": 1735001467319,
+        "comment": 1735001470036,
+        "ui.color": 1735001555128
+      }
+    ],
+    "XRvQrovfLa_7F_zpRywSY": [
+      "tableColumnEntities",
+      1735001528785,
+      -1,
+      {
+        "options(notNull)": 1735001568350,
+        "name": 1735001589584,
+        "dataType": 1735001622585,
+        "default": 1735001628123,
+        "comment": 1735001631300
+      }
+    ],
+    "PYJpStFmyqSq518Iscg2d": [
+      "tableColumnEntities",
+      1735001532845,
+      -1,
+      {
+        "name": 1735001641202,
+        "dataType": 1735001652111,
+        "options(notNull)": 1735001653714,
+        "comment": 1735001658455
+      }
+    ],
+    "-Fd_upg58CvFH6kmYBYb_": [
+      "tableColumnEntities",
+      1735001667809,
+      -1,
+      {
+        "name": 1735001672011,
+        "dataType": 1735001682050,
+        "options(notNull)": 1735001683454,
+        "comment": 1735001687375
+      }
+    ]
+  }
+}
