@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box !important;
+}
+
 body {
     background-color: whitesmoke;
     color: black;
@@ -20,21 +24,19 @@ div.main {
     width: 20%;
     background-color: white;
     padding: 30px;
-    margin: 20px;  /* 마진을 추가하지만 너비를 조정하여 영향 최소화 */
+    margin: 20px;  
     box-sizing: border-box;
     border-radius: 50px;
     flex-shrink: 0; /* 사이드바가 축소되지 않도록 설정 */
 }
 
 #calendar {
-    flex-grow: 1;  /* #calendar가 남은 공간을 다 차지하도록 설정 */
+    flex-grow: 1;
     padding: 20px;
     box-sizing: border-box;
-    overflow: hidden; /* 추가적인 스크롤을 방지 */
-    height: 100% !important;
+    overflow: hidden;
+    height: calc(100vh - 40px); /* 전체 화면에서 40px을 빼는 방식으로 높이 설정 */
 }
-
-
 
 /******************** 사이드바 ********************/
 #sidebar hr { margin: 20px 0 !important;}
@@ -66,12 +68,82 @@ div.main {
     color: gray;
 }
 
+.todolist h3 {
+    display: flex;
+    align-items: center; /* 세로 가운데 정렬 */
+    justify-content: space-between; /* 좌우 간격을 최대화 */
+}
+
+.todolist h3 button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+/******************** 투두리스트 팝업 ********************/
+/* 팝업 오버레이 스타일 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* 팝업 콘텐츠 스타일 */
+  .popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .popup-content input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .popup-content button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .popup-content button:hover {
+    background-color: #0056b3;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
 
 /******************** 캘린더 ********************/
 
 .react-calendar {
-    width: 100% !important;
-    height: 100% !important;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .react-calendar--doubleView {
@@ -83,7 +155,9 @@ div.main {
 }
 
 .react-calendar__month-view {
-    height: 100% !important;
+    flex-grow: 1; /* 남은 공간을 채우도록 설정 */
+    display: flex;
+    flex-direction: column;
 }
 
 .react-calendar--doubleView .react-calendar__viewContainer {
@@ -119,7 +193,7 @@ div.main {
 .react-calendar__navigation {
     display: flex;
     height: 44px;
-    margin-bottom: 1em;
+    /* margin-bottom: 20px; */
 }
 
 .react-calendar__navigation button {
@@ -157,6 +231,14 @@ div.main {
     font-weight: bold;
 }
 
+.react-calendar__month-view__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7열로 구성 */
+    grid-auto-rows: 1fr; /* 행 높이 자동 조정 */
+    gap: 0;
+    width: 100%;
+}
+
 .react-calendar__month-view__days__day--weekend {
     color: #d10000;
 }
@@ -174,12 +256,13 @@ div.main {
 }
 
 .react-calendar__tile {
-    max-width: 100%;
-    padding: 7em 0;
-    background: none;
-    text-align: center;
-    font: inherit;
-    font-size: 0.833em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .react-calendar__tile:disabled {
