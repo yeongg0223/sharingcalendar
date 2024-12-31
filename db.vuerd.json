@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": 0,
-    "scrollLeft": -32.2838,
+    "scrollTop": -800,
+    "scrollLeft": 0,
     "zoomLevel": 1,
     "show": 431,
     "database": 4,
@@ -72,11 +72,13 @@
         "name": "TODOLIST",
         "comment": "투두리스트",
         "columnIds": [
+          "CZsME-bZ9fgmoWJmdMavm",
           "fXrfaX0UXAN__YCCFyX4a",
           "G0DLwbogtFeEiIstWqgL0",
           "sYC5tpEXCDzItpv-MH-re"
         ],
         "seqColumnIds": [
+          "CZsME-bZ9fgmoWJmdMavm",
           "fXrfaX0UXAN__YCCFyX4a",
           "G0DLwbogtFeEiIstWqgL0",
           "sYC5tpEXCDzItpv-MH-re"
@@ -90,7 +92,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1735605174285,
+          "updateAt": 1735615367570,
           "createAt": 1735604946452
         }
       }
@@ -141,7 +143,7 @@
         "tableId": "hU1PpNZjc_81qbho5USdP",
         "name": "USER_NM",
         "comment": "사용자명",
-        "dataType": "VARCHAR(10)",
+        "dataType": "VARCHAR(20)",
         "default": "",
         "options": 8,
         "ui": {
@@ -152,7 +154,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1735604975696,
+          "updateAt": 1735608713822,
           "createAt": 1735001667810
         }
       },
@@ -215,6 +217,26 @@
           "updateAt": 1735605195962,
           "createAt": 1735605174285
         }
+      },
+      "CZsME-bZ9fgmoWJmdMavm": {
+        "id": "CZsME-bZ9fgmoWJmdMavm",
+        "tableId": "f4rVdqUBm_2hXb4dsY9JG",
+        "name": "TD_ID",
+        "comment": "",
+        "dataType": "",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1735615370833,
+          "createAt": 1735615365918
+        }
       }
     },
     "relationshipEntities": {},
@@ -270,7 +292,7 @@
       -1,
       {
         "name": 1735604975695,
-        "dataType": 1735001682050,
+        "dataType": 1735608713821,
         "options(notNull)": 1735001683454,
         "comment": 1735001687375
       }
@@ -315,6 +337,14 @@
         "dataType": 1735605187383,
         "options(notNull)": 1735605192592,
         "comment": 1735605195962
+      }
+    ],
+    "CZsME-bZ9fgmoWJmdMavm": [
+      "tableColumnEntities",
+      1735615365917,
+      -1,
+      {
+        "name": 1735615370832
       }
     ]
   }
