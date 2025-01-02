@@ -134,8 +134,8 @@ function Home() {
         <div className="todolist">
           <h3>오늘할일<button onClick={togglePopup}>+</button></h3>
           <div className="icheck-material-green">
-            <input type="checkbox" name="dinner" id="green" defaultChecked />
-            <label htmlFor="green">저녁밥</label>
+            <input type="checkbox" id="green" defaultChecked />
+            <label htmlFor="green">#tododata</label>
           </div>
         </div>
       </div>
