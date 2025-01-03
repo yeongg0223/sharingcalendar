@@ -10,6 +10,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
       </Routes>
     </Router>
   );
@@ -61,6 +63,8 @@ function Home() {
       window.removeEventListener('resize', adjustCalendarHeight);
     };
   }, []); // 빈 배열로 한 번만 호출되도록 설정
+
+  
 
   // 팝업 표시/숨김 토글 함수
   const togglePopup = () => {
@@ -119,6 +123,9 @@ function Home() {
   return (
     <div className="main">
       <div id="sidebar">
+        <div className="login-print">
+          <a href='/login'>로그인</a> 후 이용하세요
+        </div>
         <div className="profile">
           <img
             src="https://avatars.githubusercontent.com/u/144537092?v=4&size=64"
@@ -177,6 +184,54 @@ function Home() {
           formatMonthYear={formatMonthYear}
         />
       </div>
+    </div>
+  );
+}
+
+function Login() {
+  return (
+    <div className="login">
+      <h2>로그인</h2>
+      <form>
+        <label>
+          이름:
+          <input type="text" name="name" />
+        </label>
+        <br />
+        <label>
+          비밀번호:
+          <input type="password" name="password" />
+        </label>
+        <br />
+        <button type="submit">로그인</button>
+        <a href='/signup'><button type="button">회원가입</button></a>
+      </form>
+    </div>
+  );
+}
+
+function SignUp() {
+  return (
+    <div className="signup">
+      <h2>회원가입</h2>
+      <form>
+        <label>
+          이름:
+          <input type="text" name="name" />
+        </label>
+        <br />
+        <label>
+          이메일:
+          <input type="email" name="email" />
+        </label>
+        <br />
+        <label>
+          비밀번호:
+          <input type="password" name="password" />
+        </label>
+        <br />
+        <button type="submit">회원가입</button>
+      </form>
     </div>
   );
 }

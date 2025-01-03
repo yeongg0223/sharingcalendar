@@ -7,7 +7,6 @@ body {
     color: black;
 }
 
-#root,
 body,
 html {
     height: 100%;
@@ -79,6 +78,25 @@ div.main {
     border: none;
     cursor: pointer;
 }
+
+
+/******************** 회원가입 ********************/
+/* App.css */
+.login,
+.signup {
+    background-color: #ffffff; /* 원하는 배경색 */
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 선택사항: 그림자 효과 */
+  }  
+
+
 
 /******************** 투두리스트 팝업 ********************/
 /* 팝업 오버레이 스타일 */
