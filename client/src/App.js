@@ -4,34 +4,50 @@ import './App.css';
 import Calendar from 'react-calendar';
 import '../node_modules/icheck-material/icheck-material.min.css';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+
+  useEffect(() => {
+    const savedLoginState = localStorage.getItem('isLoggedIn');
+    if (savedLoginState === 'true') {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    localStorage.setItem('isLoggedIn', 'true');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false); 
+    localStorage.removeItem('isLoggedIn'); 
+  };
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Home isLoggedIn={isLoggedIn} onLogout={handleLogout} />} />
+        <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
         <Route path="/signup" element={<SignUp />} />
       </Routes>
     </Router>
   );
 }
 
-function Home() {
+function Home({ isLoggedIn, onLogout }) {
   const [date, setDate] = useState(new Date());
-  const [isPopupVisible, setIsPopupVisible] = useState(false); // 팝업의 표시 여부
-  const [todoDate, setTodoDate] = useState(""); // 날짜 상태
-  const [todoTitle, setTodoTitle] = useState(""); // 제목 상태
+  const [isPopupVisible, setIsPopupVisible] = useState(false); 
+  const [todoDate, setTodoDate] = useState(""); 
+  const [todoTitle, setTodoTitle] = useState(""); 
   const calendarRef = useRef(null);
 
-  // 날짜 변경 핸들러
   const onChange = (newDate) => setDate(newDate);
-
-  // 날짜 포맷
   const formatDay = (locale, date) => date.getDate();
   const formatMonthYear = (locale, date) => moment(date).format('MMMM, YYYY'); // 예: "December, 2024"
 
-  // 캘린더 높이 조정
   useEffect(() => {
     const adjustCalendarHeight = () => {
       if (calendarRef.current) {
@@ -124,7 +140,13 @@ function Home() {
     <div className="main">
       <div id="sidebar">
         <div className="login-print">
-          <a href='/login'>로그인</a> 후 이용하세요
+          {isLoggedIn ? (
+            <button onClick={onLogout}>로그아웃</button>  
+          ) : (
+            <>
+              <a href='/login'>로그인</a> 후 이용하세요
+            </>
+          )}
         </div>
         <div className="profile">
           <img
@@ -188,46 +210,161 @@ function Home() {
   );
 }
 
-function Login() {
+function Login({ onLoginSuccess }) {
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); 
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    if (!id || !password) {
+      setError('아이디와 비밀번호를 입력하세요');
+      return;
+    }
+
+    const user = {
+      user_id: id,
+      user_pw: password,
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        // alert(data.message); 
+        onLoginSuccess();
+        navigate('/');
+      } else {
+        alert(data.message);  // 로그인 실패 메시지
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      setError('로그인 중 오류가 발생했습니다.');
+    }
+  };
+
   return (
     <div className="login">
       <h2>로그인</h2>
-      <form>
+      <form onSubmit={handleLogin}>
         <label>
-          이름:
-          <input type="text" name="name" />
+          아이디:
+          <input
+            type="text"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+          />
         </label>
         <br />
         <label>
           비밀번호:
-          <input type="password" name="password" />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </label>
         <br />
         <button type="submit">로그인</button>
-        <a href='/signup'><button type="button">회원가입</button></a>
+        <a href="/signup"><button type="button">회원가입</button></a>
       </form>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 }
 
+
 function SignUp() {
+  const [name, setName] = useState('');
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    // 필수 입력 항목 개별 검증
+    if (!name) {
+      alert('이름은 필수 입력 항목입니다!');
+      return;
+    }
+    if (!id) {
+      alert('아이디는 필수 입력 항목입니다!');
+      return;
+    }
+    if (!password) {
+      alert('비밀번호는 필수 입력 항목입니다!');
+      return;
+    }
+
+    const user = {
+      user_nm: name,
+      user_id: id,
+      user_pw: password,
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/user/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+
+      if (response.ok) {
+        alert('회원가입이 완료되었습니다!');
+        setName('');
+        setId('');
+        setPassword('');
+      } else {
+        const errorData = await response.json();
+        alert(`회원가입 실패: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('Error during sign-up:', error);
+      alert('회원가입 중 오류가 발생했습니다.');
+    }
+  };
+
   return (
     <div className="signup">
       <h2>회원가입</h2>
-      <form>
+      <form onSubmit={handleSignUp}>
         <label>
           이름:
-          <input type="text" name="name" />
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </label>
         <br />
         <label>
-          이메일:
-          <input type="email" name="email" />
+          아이디:
+          <input
+            type="text"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+          />
         </label>
         <br />
         <label>
           비밀번호:
-          <input type="password" name="password" />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </label>
         <br />
         <button type="submit">회원가입</button>
@@ -235,5 +372,7 @@ function SignUp() {
     </div>
   );
 }
+
+
 
 export default App;

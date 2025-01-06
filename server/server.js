@@ -28,6 +28,9 @@ app.get("/", (req, res) => {
   console.log("My name is...");
 });
 
+
+
+// 투두리스트 
 app.post("/todos", (req, res) => {
   const { title, td_date, user_id } = req.body;
 
@@ -65,8 +68,69 @@ app.post("/todos", (req, res) => {
         return res.status(500).json({ error: "Failed to save todo" });
       }
 
-      // 성공적으로 저장된 경우
       res.status(200).json({ message: "Todo saved successfully", id: formattedId });
+    });
+  });
+});
+
+
+// 로그인
+app.post("/user/login", (req, res) => {
+  const { user_id, user_pw } = req.body;
+
+  if (!user_id || !user_pw) {
+    return res.status(400).json({ error: "Both user_id and user_pw are required" });
+  }
+
+  // 아이디와 비밀번호로 사용자 조회
+  const query = 'SELECT * FROM USERINFO WHERE USER_ID = ? AND USER_PW = ?';
+  db.query(query, [user_id, user_pw], (err, result) => {
+    if (err) {
+      console.error('Error during login:', err);
+      return res.status(500).json({ error: "Error checking user credentials" });
+    }
+
+    if (result.length > 0) {
+      // 로그인 성공
+      res.status(200).json({ message: "Login successful" });
+    } else {
+      // 로그인 실패
+      res.status(401).json({ message: "Invalid credentials" });
+    }
+  });
+});
+
+
+
+// 회원가입
+app.post("/user/signup", (req, res) => {
+  const { user_nm, user_id, user_pw } = req.body;
+
+  if (!user_nm || !user_id || !user_pw) {
+    return res.status(400).json({ error: "All fields (user_nm, user_id, user_pw) are required" });
+  }
+
+  // 중복 아이디 확인
+  const checkQuery = 'SELECT USER_ID FROM USERINFO WHERE USER_ID = ?';
+  db.query(checkQuery, [user_id], (err, result) => {
+    if (err) {
+      console.error('Error checking duplicate user ID:', err);
+      return res.status(500).json({ error: "Error checking user ID" });
+    }
+
+    if (result.length > 0) {
+      return res.status(409).json({ error: "User ID already exists" });
+    }
+
+    // 유저 데이터 등록
+    const query = 'INSERT INTO USERINFO (USER_NM, USER_ID, USER_PW) VALUES (?, ?, ?)';
+    db.query(query, [user_nm, user_id, user_pw], (err, result) => {
+      if (err) {
+        console.error('Error inserting user data into DB:', err);
+        return res.status(500).json({ error: "Failed to register user" });
+      }
+
+      res.status(200).json({ message: "User registered successfully" });
     });
   });
 });
