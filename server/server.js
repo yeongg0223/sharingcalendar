@@ -89,12 +89,11 @@ app.post("/user/login", (req, res) => {
       console.error('Error during login:', err);
       return res.status(500).json({ error: "Error checking user credentials" });
     }
+    console.log('Executing query:', query);
 
     if (result.length > 0) {
-      // 로그인 성공
       res.status(200).json({ message: "Login successful" });
     } else {
-      // 로그인 실패
       res.status(401).json({ message: "Invalid credentials" });
     }
   });
@@ -115,7 +114,7 @@ app.post("/user/signup", (req, res) => {
   db.query(checkQuery, [user_id], (err, result) => {
     if (err) {
       console.error('Error checking duplicate user ID:', err);
-      return res.status(500).json({ error: "Error checking user ID" });
+      return res.status(500).json({ error: "Error checking user ID" }); 
     }
 
     if (result.length > 0) {
@@ -129,7 +128,7 @@ app.post("/user/signup", (req, res) => {
         console.error('Error inserting user data into DB:', err);
         return res.status(500).json({ error: "Failed to register user" });
       }
-
+      console.log('Executing query:', query);
       res.status(200).json({ message: "User registered successfully" });
     });
   });
