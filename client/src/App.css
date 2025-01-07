@@ -275,10 +275,8 @@ div.main {
 
 .react-calendar__tile {
     display: flex;
-    align-items: center;
-    justify-content: center;
     margin: 0;
-    padding: 0;
+    padding: 10px 0 0 10px;
     overflow: hidden;
     box-sizing: border-box;
 }

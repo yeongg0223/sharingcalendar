@@ -159,6 +159,35 @@ function Home({ user, onLogout }) {
 }
 
 function Sidebar({ user, onLogout, togglePopup }) {
+
+  const [todos, setTodos] = useState([]);
+
+  // 서버에서 TODO 데이터 가져오기
+  const fetchTodos = async () => {
+    try {
+      console.log(`Fetching todos for user: ${user.userId}`);
+      const response = await fetch(`http://localhost:5000/todos/${user.userId}`);
+      console.log("Response status:", response.status);
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Fetched todos:", data);
+        setTodos(data);
+      } else {
+        console.error("Failed to fetch todos with status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    }
+  };  
+
+  // 컴포넌트가 렌더링될 때 TODO 데이터 가져오기
+  useEffect(() => {
+    if (user.isLoggedIn) {
+      console.log(user.userId)
+      fetchTodos();
+    }
+  }, [user]);
+
   return (
     <div id="sidebar">
       <div className="login-print">
@@ -187,7 +216,15 @@ function Sidebar({ user, onLogout, togglePopup }) {
         <h3>
           오늘할일 <button onClick={togglePopup}>+</button>
         </h3>
-        <div className="todoset"></div>
+        <div className="todoset">
+          <ul>
+            {todos.map((todo) => (
+              <li key={todo.TD_ID}>
+                <span>{todo.TITLE}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

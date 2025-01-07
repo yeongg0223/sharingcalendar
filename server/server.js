@@ -28,9 +28,7 @@ app.get("/", (req, res) => {
   console.log("My name is...");
 });
 
-
-
-// 투두리스트 
+// 투두리스트 추가
 app.post("/todos", (req, res) => {
   const { title, td_date, user_id } = req.body;
 
@@ -73,7 +71,6 @@ app.post("/todos", (req, res) => {
   });
 });
 
-
 // 로그인
 app.post("/user/login", (req, res) => {
   const { user_id, user_pw } = req.body;
@@ -98,8 +95,6 @@ app.post("/user/login", (req, res) => {
     }
   });
 });
-
-
 
 // 회원가입
 app.post("/user/signup", (req, res) => {
@@ -134,6 +129,31 @@ app.post("/user/signup", (req, res) => {
   });
 });
 
+// 투두리스트 불러오기
+app.get("/todos/:userId", (req, res) => {
+  const { userId } = req.params;
+
+  // 쿼리문과 파라미터 출력
+  console.log("With parameter:", userId);
+  const query = "SELECT * FROM TODOLIST WHERE USER_ID = ?";
+  console.log("Executing query:", query);
+
+  // 쿼리 실행
+  db.query(query, [userId], (err, result) => {
+    if (err) {
+      console.error('Error fetching todos:', err);
+      return res.status(500).json({ message: "Failed to fetch todos", error: err.message });
+    }
+
+    // 결과 출력
+    console.log("Query result:", result);
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "No todos found for the user." });
+    }
+    res.json(result);
+  });
+});
 
 app.listen(5000, function () {
   console.log('listening on 5000');
