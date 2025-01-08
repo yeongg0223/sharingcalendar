@@ -24,8 +24,7 @@ db.connect((err) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Chris!");
-  console.log("My name is...");
+  res.send("Success");
 });
 
 // 투두리스트 추가
@@ -133,25 +132,47 @@ app.post("/user/signup", (req, res) => {
 app.get("/todos/:userId", (req, res) => {
   const { userId } = req.params;
 
-  // 쿼리문과 파라미터 출력
   console.log("With parameter:", userId);
   const query = "SELECT * FROM TODOLIST WHERE USER_ID = ?";
   console.log("Executing query:", query);
 
-  // 쿼리 실행
   db.query(query, [userId], (err, result) => {
     if (err) {
       console.error('Error fetching todos:', err);
       return res.status(500).json({ message: "Failed to fetch todos", error: err.message });
     }
-
-    // 결과 출력
+    
     console.log("Query result:", result);
 
     if (result.length === 0) {
       return res.status(404).json({ message: "No todos found for the user." });
     }
     res.json(result);
+  });
+});
+
+
+app.put("/todos/:todoId", (req, res) => {
+  const { todoId } = req.params;
+  const { CK_YN } = req.body;
+
+  if (!todoId || !CK_YN) {
+    return res.status(400).json({ error: "Invalid request" });
+  }
+
+  const query = "UPDATE TODOLIST SET CK_YN = ? WHERE TD_ID = ?";
+  console.log("Executing query:", query); 
+  db.query(query, [CK_YN, todoId], (err, result) => {
+    if (err) {
+      console.error("Error updating CK_YN:", err);
+      return res.status(500).json({ error: "Failed to update CK_YN" });
+    }
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: "CK_YN updated successfully" });
+    } else {
+      res.status(404).json({ message: "Todo not found" });
+    }
   });
 });
 

@@ -30,7 +30,7 @@ div.main {
 }
 
 #calendar {
-    flex-grow: 1;
+    flex-grow: 1;   
     padding: 20px;
     box-sizing: border-box;
     overflow: hidden;
@@ -77,6 +77,11 @@ div.main {
     background-color: transparent;
     border: none;
     cursor: pointer;
+}
+
+.todoset ul {
+    list-style: none;
+    padding: 0;
 }
 
 

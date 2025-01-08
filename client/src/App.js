@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -32,7 +32,9 @@ function App() {
     setUser({ isLoggedIn: false, userId: "" });
     localStorage.removeItem("isLoggedIn");
     localStorage.removeItem("userId");
+    window.location.reload(); // 페이지 새로고침
   };
+  
 
   return (
     <Router>
@@ -57,6 +59,7 @@ function Home({ user, onLogout }) {
   const [todoDate, setTodoDate] = useState(moment().format("YYYY-MM-DD"));
   const [todoTitle, setTodoTitle] = useState("");
   const calendarRef = useRef(null);
+  const navigate = useNavigate();
 
   // 달력 높이를 조정하는 함수
   const adjustCalendarHeight = () => {
@@ -103,7 +106,12 @@ function Home({ user, onLogout }) {
   };
 
   const togglePopup = () => {
-    setIsPopupVisible(!isPopupVisible);
+    if (user.isLoggedIn) {
+      setIsPopupVisible(!isPopupVisible); 
+    } else {
+      alert('먼저 로그인을 해주세요.');
+      navigate('/login');
+    };
   };
 
   const saveTodo = async () => {
@@ -159,14 +167,14 @@ function Home({ user, onLogout }) {
 }
 
 function Sidebar({ user, onLogout, togglePopup }) {
-
   const [todos, setTodos] = useState([]);
 
-  // 서버에서 TODO 데이터 가져오기
-  const fetchTodos = async () => {
+  const fetchTodos = useCallback(async () => {
     try {
       console.log(`Fetching todos for user: ${user.userId}`);
-      const response = await fetch(`http://localhost:5000/todos/${user.userId}`);
+      const response = await fetch(
+        `http://localhost:5000/todos/${user.userId}`
+      );
       console.log("Response status:", response.status);
       if (response.ok) {
         const data = await response.json();
@@ -178,15 +186,42 @@ function Sidebar({ user, onLogout, togglePopup }) {
     } catch (error) {
       console.error("Error fetching todos:", error);
     }
-  };  
+  }, [user.userId]); // `user.userId`를 의존성에 추가
+  
 
-  // 컴포넌트가 렌더링될 때 TODO 데이터 가져오기
+  const handleCheckboxChange = async (todo) => {
+    const updatedCK_YN = todo.CK_YN === "Y" ? "N" : "Y";
+  
+    const updatedTodos = todos.map((t) =>
+      t.TD_ID === todo.TD_ID ? { ...t, CK_YN: updatedCK_YN } : t
+    );
+    setTodos(updatedTodos);
+  
+    try {
+      const response = await fetch(`http://localhost:5000/todos/${todo.TD_ID}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ CK_YN: updatedCK_YN }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update CK_YN on the server");
+      }
+  
+      console.log(`Todo ${todo.TD_ID} updated successfully`);
+    } catch (error) {
+      console.error("Error updating CK_YN:", error);
+  
+      setTodos(todos);
+    }
+  };
+
   useEffect(() => {
     if (user.isLoggedIn) {
-      console.log(user.userId)
       fetchTodos();
     }
-  }, [user]);
+  }, [user.isLoggedIn, fetchTodos]);
+  
 
   return (
     <div id="sidebar">
@@ -197,7 +232,7 @@ function Sidebar({ user, onLogout, togglePopup }) {
             <button onClick={onLogout}>로그아웃</button>
           </>
         ) : (
-          <a href="/login">로그인 후 이용하세요</a>
+          <a href="/login">로그인</a>
         )}
       </div>
       <div className="profile">
@@ -216,14 +251,19 @@ function Sidebar({ user, onLogout, togglePopup }) {
         <h3>
           오늘할일 <button onClick={togglePopup}>+</button>
         </h3>
-        <div className="todoset">
-          <ul>
-            {todos.map((todo) => (
-              <li key={todo.TD_ID}>
-                <span>{todo.TITLE}</span>
-              </li>
-            ))}
-          </ul>
+      <div className="todoset">
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.TD_ID}>
+              <input
+                type="checkbox"
+                checked={todo.CK_YN === "Y"} // CK_YN 값이 'Y'일 경우 체크
+                onChange={() => handleCheckboxChange(todo)} // 상태 변경 핸들러
+              />
+              <span>{todo.TITLE}</span>
+            </li>
+          ))}
+        </ul>
         </div>
       </div>
     </div>
