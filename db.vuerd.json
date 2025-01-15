@@ -97,25 +97,6 @@
           "updateAt": 1736222015858,
           "createAt": 1735604946452
         }
-      },
-      "da0AqZX-yMR5Q0M36PTGM": {
-        "id": "da0AqZX-yMR5Q0M36PTGM",
-        "name": "",
-        "comment": "",
-        "columnIds": [],
-        "seqColumnIds": [],
-        "ui": {
-          "x": 230,
-          "y": 183,
-          "zIndex": 8,
-          "widthName": 60,
-          "widthComment": 60,
-          "color": ""
-        },
-        "meta": {
-          "updateAt": 1736209603201,
-          "createAt": 1736209468015
-        }
       }
     },
     "tableColumnEntities": {
@@ -401,12 +382,6 @@
         "options(notNull)": 1736149792973,
         "comment": 1736149796739
       }
-    ],
-    "da0AqZX-yMR5Q0M36PTGM": [
-      "tableEntities",
-      1736209468014,
-      1736209603307,
-      {}
     ]
   }
 }

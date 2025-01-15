@@ -34,7 +34,6 @@ function App() {
     localStorage.removeItem("userId");
     window.location.reload(); // 페이지 새로고침
   };
-  
 
   return (
     <Router>
@@ -58,10 +57,10 @@ function Home({ user, onLogout }) {
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [todoDate, setTodoDate] = useState(moment().format("YYYY-MM-DD"));
   const [todoTitle, setTodoTitle] = useState("");
+  const [todos, setTodos] = useState([]);
   const calendarRef = useRef(null);
   const navigate = useNavigate();
 
-  // 달력 높이를 조정하는 함수
   const adjustCalendarHeight = () => {
     if (calendarRef.current) {
       const calendarElement = calendarRef.current;
@@ -85,33 +84,77 @@ function Home({ user, onLogout }) {
     }
   };
 
-  useEffect(() => {
-    adjustCalendarHeight();
-    window.addEventListener("resize", adjustCalendarHeight);
+  const fetchTodos = useCallback(async () => {
+    if (!user.userId) {
+      console.error("User ID가 없습니다. 로그인 후 다시 시도해주세요.");
+      return;
+    }
+    
+    try {
+      console.log('집에가고싶다');
+      const response = await fetch(`http://localhost:5000/todos/${user.userId}`);
+      console.log("User ID 검색전:", user.userId); 
+      if (response.ok) {
+        const data = await response.json();
+        setTodos(data);
+        const todoCount = getTodoCountForDate(date);
+        console.log(`Date: ${date.toLocaleDateString()}, Todo Count: ${todoCount}`);
+      } else {
+        console.error("Failed to fetch todos");
+      }
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    }
+  }, [user.userId, date]); // user.userId를 의존성 배열에 추가
+  
+  
 
-    return () => {
-      window.removeEventListener("resize", adjustCalendarHeight);
-    };
-  }, [date]);
-
-  const handleActiveStartDateChange = ({ activeStartDate }) => {
-    adjustCalendarHeight();
+  const getTodoCountForDate = (date) => {
+    // 선택된 날짜를 'YYYY-MM-DD' 형식으로 변환
+    const formattedDate = date.toLocaleDateString();
+    console.log(`Comparing with Date: ${formattedDate}`);
+  
+    // todos 배열을 필터링하여 날짜가 일치하는 투두의 개수 구하기
+    const count = todos.filter((todo) => {
+      const todoDate = new Date(todo.TD_DATE);
+      const formattedTodoDate = todoDate.toLocaleDateString();  // 로컬 시간대 기준으로 변환
+  
+      // 비교하는 날짜 및 값 출력
+      console.log(`Todo Date: ${formattedTodoDate}, Target Date: ${formattedDate}`);
+      console.log(`Are they equal? ${formattedTodoDate === formattedDate}`);
+  
+      return formattedTodoDate === formattedDate;  // 날짜만 비교
+    }).length;
+  
+    console.log(`Total Todo Count for ${formattedDate}: ${count}`);
+    return count;
   };
+  
 
-  const handleMonthClick = (month) => {
-    console.log("Clicked month:", month);
-    setTimeout(() => {
-      adjustCalendarHeight();
-    }, 0);
+  
+
+  const renderTileContent = ({ date, view }) => {
+    if (view === 'month') {
+      const todoCount = getTodoCountForDate(date);
+      console.log(`Date: ${date.toLocaleDateString()}, Todo Count: ${todoCount}`);  // 날짜와 투두 개수를 콘솔에 출력
+      if (todoCount > 0) {
+        return (
+          <div className="todo-indicator">
+            <span className="dot">{todoCount}</span>
+          </div>
+        );
+      }
+    }
+    return null;
   };
-
+  
   const togglePopup = () => {
     if (user.isLoggedIn) {
-      setIsPopupVisible(!isPopupVisible); 
+      setIsPopupVisible(!isPopupVisible);
     } else {
-      alert('먼저 로그인을 해주세요.');
-      navigate('/login');
-    };
+      alert("먼저 로그인을 해주세요.");
+      navigate("/login");
+    }
   };
 
   const saveTodo = async () => {
@@ -122,11 +165,12 @@ function Home({ user, onLogout }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(todo),
       });
-
+  
       if (response.ok) {
         alert("Todo saved successfully");
         setTodoTitle("");
         togglePopup();
+        fetchTodos();  // 투두 저장 후 목록을 다시 불러옴
       } else {
         alert("Failed to save todo");
       }
@@ -135,6 +179,23 @@ function Home({ user, onLogout }) {
       alert("Error saving todo");
     }
   };
+
+  useEffect(() => {
+    adjustCalendarHeight();
+    window.addEventListener("resize", adjustCalendarHeight);
+
+    return () => {
+      window.removeEventListener("resize", adjustCalendarHeight);
+    };
+  }, [date]);
+
+  useEffect(() => {
+    console.log("Fetched Todos111:", todos);  // todos 배열의 데이터를 확인하기 위한 로그
+    if (todos.length > 0) {
+      const todoCount = getTodoCountForDate(date);
+      console.log(`Date: ${date.toLocaleDateString()}, Todo Count: ${todoCount}`);
+    }
+  }, [todos, date]);  
 
   return (
     <div className="main">
@@ -158,60 +219,58 @@ function Home({ user, onLogout }) {
           formatDay={(locale, date) => date.getDate()}
           formatMonthYear={(locale, date) => moment(date).format("MMMM, YYYY")}
           calendarType="gregory"
-          onActiveStartDateChange={handleActiveStartDateChange}
-          onClickMonth={handleMonthClick}
+          tileContent={renderTileContent}
         />
       </div>
     </div>
   );
 }
 
-function Sidebar({ user, onLogout, togglePopup }) {
+function Sidebar({ user, onLogout, togglePopup }) {   
   const [todos, setTodos] = useState([]);
 
   const fetchTodos = useCallback(async () => {
     try {
-      console.log(`Fetching todos for user: ${user.userId}`);
-      const response = await fetch(
-        `http://localhost:5000/todos/${user.userId}`
-      );
-      console.log("Response status:", response.status);
+      const response = await fetch(`http://localhost:5000/todos/${user.userId}`);
       if (response.ok) {
         const data = await response.json();
-        console.log("Fetched todos:", data);
+        console.log("Fetched Todos:", data);
         setTodos(data);
       } else {
-        console.error("Failed to fetch todos with status:", response.status);
+        console.error("Failed to fetch todos");
       }
     } catch (error) {
       console.error("Error fetching todos:", error);
     }
-  }, [user.userId]); // `user.userId`를 의존성에 추가
+  }, [user.userId]);
   
 
   const handleCheckboxChange = async (todo) => {
     const updatedCK_YN = todo.CK_YN === "Y" ? "N" : "Y";
-  
+
     const updatedTodos = todos.map((t) =>
       t.TD_ID === todo.TD_ID ? { ...t, CK_YN: updatedCK_YN } : t
     );
     setTodos(updatedTodos);
-  
+
     try {
-      const response = await fetch(`http://localhost:5000/todos/${todo.TD_ID}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ CK_YN: updatedCK_YN }),
-      });
-  
+      const response = await fetch(
+        `http://localhost:5000/todos/${todo.TD_ID}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ CK_YN: updatedCK_YN }),
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Failed to update CK_YN on the server");
       }
-  
+
       console.log(`Todo ${todo.TD_ID} updated successfully`);
     } catch (error) {
       console.error("Error updating CK_YN:", error);
-  
+
       setTodos(todos);
     }
   };
@@ -221,7 +280,6 @@ function Sidebar({ user, onLogout, togglePopup }) {
       fetchTodos();
     }
   }, [user.isLoggedIn, fetchTodos]);
-  
 
   return (
     <div id="sidebar">
@@ -251,19 +309,19 @@ function Sidebar({ user, onLogout, togglePopup }) {
         <h3>
           오늘할일 <button onClick={togglePopup}>+</button>
         </h3>
-      <div className="todoset">
-        <ul>
-          {todos.map((todo) => (
-            <li key={todo.TD_ID}>
-              <input
-                type="checkbox"
-                checked={todo.CK_YN === "Y"} // CK_YN 값이 'Y'일 경우 체크
-                onChange={() => handleCheckboxChange(todo)} // 상태 변경 핸들러
-              />
-              <span>{todo.TITLE}</span>
-            </li>
-          ))}
-        </ul>
+        <div className="todoset">
+          <ul>
+            {todos.map((todo) => (
+              <li key={todo.TD_ID}>
+                <input
+                  type="checkbox"
+                  checked={todo.CK_YN === "Y"} // CK_YN 값이 'Y'일 경우 체크
+                  onChange={() => handleCheckboxChange(todo)} // 상태 변경 핸들러
+                />
+                <span>{todo.TITLE}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
