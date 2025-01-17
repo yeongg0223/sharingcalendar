@@ -91,7 +91,7 @@ function Home({ user, onLogout }) {
     }
     
     try {
-      console.log('집에가고싶다');
+      console.log('날짜 매칭 확인용 콘솔');
       const response = await fetch(`http://localhost:5000/todos/${user.userId}`);
       console.log("User ID 검색전:", user.userId); 
       if (response.ok) {
@@ -105,7 +105,7 @@ function Home({ user, onLogout }) {
     } catch (error) {
       console.error("Error fetching todos:", error);
     }
-  }, [user.userId, date]); // user.userId를 의존성 배열에 추가
+  }, [user.userId, date]); 
   
   
 
@@ -117,13 +117,12 @@ function Home({ user, onLogout }) {
     // todos 배열을 필터링하여 날짜가 일치하는 투두의 개수 구하기
     const count = todos.filter((todo) => {
       const todoDate = new Date(todo.TD_DATE);
-      const formattedTodoDate = todoDate.toLocaleDateString();  // 로컬 시간대 기준으로 변환
+      const formattedTodoDate = todoDate.toLocaleDateString();  
   
-      // 비교하는 날짜 및 값 출력
       console.log(`Todo Date: ${formattedTodoDate}, Target Date: ${formattedDate}`);
       console.log(`Are they equal? ${formattedTodoDate === formattedDate}`);
   
-      return formattedTodoDate === formattedDate;  // 날짜만 비교
+      return formattedTodoDate === formattedDate;
     }).length;
   
     console.log(`Total Todo Count for ${formattedDate}: ${count}`);
